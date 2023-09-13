@@ -1,0 +1,6 @@
+## Understanding Absorption cross section
+
+I was reading about volume scattering in Physically Based Rendering when I encountered this differential equation:
+
+$$ \D{L_o} $$
+
