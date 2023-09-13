@@ -1,5 +1,5 @@
 
-1. [There is something wrong with this equation](#intro)
+1. [There is something confusing in this equation](#intro)
 2. [(Background) First order linear differential equation and solution](#diffeq)
 3. [(Background) (Background) Summary of relavant variables in Volume Scattering](#volume_scattering)
     1. [Radiance](#radiance)
@@ -9,7 +9,7 @@
     2. [Assumption - Continuity of Radiance](#cont_radiance)
 5. [Re-formulating the differential equation around d](#reformulate)
 
-## There is something wrong with this equation <a name="intro"></a>
+## There is something confusing in this equation <a name="intro"></a>
 
 I was reading about volume scattering in Physically Based Rendering (aka [PBRT](https://pbrt.org/)) when I encountered this differential equation:
 
@@ -203,7 +203,7 @@ $$= \frac{dL(p, \omega)}{dt} \ \ \ \ \ \text{(by definition of derivative)}$$
 
 Hence we obtain
 
-$$dL(p, \omega)} = -\sigma_a(p, \omega)L(p, \omega) dt$$
+$$dL(p, \omega) = -\sigma_a(p, \omega)L(p, \omega) dt$$
 
 and solution to the differential equation as
 
