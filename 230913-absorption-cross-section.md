@@ -1,4 +1,14 @@
-## Understanding Absorption cross section
+
+1. [There is something wrong with this equation](#intro)
+2. [(Background) First order linear differential equation and solution](#diffeq)
+3. [(Background) (Background) Summary of relavant variables in Volume Scattering](#volume_scattering)
+    1. [Radiance](#radiance)
+    2. [Absorption cross section](#absorption_cs)
+4. [Solution doesn't fit the differential equation!](#doesnt_fit)
+5. [Modifying the equation to make the solution fit](#modify_eq)
+6. 
+
+## There is something wrong with this equation <a name="intro"></a>
 
 I was reading about volume scattering in Physically Based Rendering (aka [PBRT](https://pbrt.org/)) when I encountered this differential equation:
 
@@ -6,13 +16,13 @@ $$d L_o(p, \omega) = -\sigma_a(p, \omega) L_i(p, -\omega) dt \ \ \ \tag{1}$$
 
 with the solution given as
 
-$$\large e^{-\int_{0}^{d} \omega_a(p+t \omega, \omega) dt} \ \ \ \tag{2}$$
+$$\large e^{-\int_{0}^{d} \sigma_a(p+t \omega, \omega) dt} \ \ \ \tag{2}$$
 
 However it seemed unclear how (2) could work as the solution of the differential equation (1). 
 
 In fact, there is no explanation on which function (1) corresponds to within the differential equation, and substituting (2) to either of $L_o(p, \omega)$ or $L_i(p, -\omega)$ doesn't fit the equation (1), which made me question what this solution was meant for.
 
-### (Background) First order linear differential equation and solution
+### (Background) First order linear differential equation and solution <a name="diffeq"></a>
 
 The solution to first-order linear differential equation is well-known. Given an equation of the form
 
@@ -24,11 +34,11 @@ $$ y = e^{\ \int f(x) dx}$$
 
 easily verified using substitution.
 
-### (Background) Summary of relavant variables in Volume Scattering
+### (Background) Summary of relavant variables in Volume Scattering <a name="volume_scattering"></a>
 
 The differential equation (1) explains the absorption of radiance crossing a mass of particles in a probabilistic way. 
 
-#### Radiance
+#### Radiance <a name="radiance"></a>
 
 Radiance is defined using Energy, Radiant Flux (Power), Irradiance and Radiant Exitance (explained well here in [Radiometry - PBRT](https://pbr-book.org/3ed-2018/Color_and_Radiometry/Radiometry))
 
@@ -76,7 +86,7 @@ defines the two functions in (1):
 
 $$d L_o(p, \omega) = -\sigma_a(p, \omega) L_i(p, -\omega) dt \ \ \ \tag{1}$$
 
-#### Absorption cross section
+#### Absorption cross section <a name="absorption_cs"></a>
 
 Absorption cross section, $\sigma_a$, is the probability density function of light being absorbed per unit distance travelled. The general idea and formulation of Absorption is describe here ([Absorption - PBRT](https://pbr-book.org/3ed-2018/Volume_Scattering/Volume_Scattering_Processes#Absorption))
 
@@ -94,23 +104,33 @@ $$L_o(p, \omega) - L_i(p, -\omega) = d L_o(p, \omega) = -\sigma_a(p, \omega) L_i
 
 which the solution is given as
 
-$$\large e^{-\int_{0}^{d} \omega_a(p+t \omega, \omega) dt} \ \ \ \tag{2}$$
+$$\large e^{-\int_{0}^{d} \sigma_a(p+t \omega, \omega) dt} \ \ \ \tag{2}$$
 
-## Solution doesn't fit the differential equation!
+## Solution doesn't fit the differential equation! <a name="doesnt_fit"></a>
 
 Recall the problem: The differential equation was given as
 
 $$d L_o(p, \omega) = -\sigma_a(p, \omega) L_i(p, -\omega) dt \ \ \ \tag{1}$$
 
-and the 'solution' provided was
+and the 'solution' provided in PBRT was
 
 > If we assume that the ray travels a distance d in direction w through the medium starting at point p, the remaining portion of the original radiance is given by
 
 $$\large e^{-\int_{0}^{d} \omega_a(p+t \omega, \omega) dt} \ \ \ \tag{2}$$
 
-which, since we are assuming $L_o(p, \omega)$ != $L_i(p, -\omega)$, doesn't seem to fit in the differential equation in any way.
+For convenience let's call this A. Differentiating this solution gives
 
-### Modifying the equation to make the solution fit
+$$ A = e^{-\int_{0}^{d} \omega_a(p+t \omega, \omega) dt}\ \ \ \tag{2}$$
+
+$$ \frac{dA}{dt} = -\sigma_a(p+d \omega, \omega) \cdot \large e^{-\int_{0}^{d} \sigma_a(p+t \omega, \omega) dt} = -\sigma_a(p+d \omega, \omega) \cdot A \ \ \ \tag{3}$$
+
+(Note that the integral in the exponent cancels out by fundamental theorem of calculus, and variable of integration, t, gets replaced by d)
+
+There are certain points we can compare (3) with equation (1). The left hand side of (1) has $L_o(p, \omega)$ being differentiated, while the left hand side of (2) has $A$ being differentiated. Usually we would expect $A = L_o(p, \omega)$. However on the right hand side of (1) there is L_i(p, -\omega) instead of $L_o(p, \omega)$, and more importantly, the absorption cross section ($\sigma_a$) is evaluated on point $p+d \omega$ instead of point $p$.
+
+### Modifying the equation to make the solution fit <a name="modify_eq"></a>
+
+Instead of applying the differential equation on 
 
 todo
 
