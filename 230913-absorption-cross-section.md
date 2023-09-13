@@ -5,8 +5,9 @@
     1. [Radiance](#radiance)
     2. [Absorption cross section](#absorption_cs)
 4. [Solution doesn't fit the differential equation!](#doesnt_fit)
-5. [Modifying the equation to make the solution fit](#modify_eq)
-6. 
+    1. [Assumptions that can make the solution fit](#modify_eq)
+    2. [Assumption - Continuity of Radiance](#cont_radiance)
+5. [Re-formulating the differential equation around d](#reformulate)
 
 ## There is something wrong with this equation <a name="intro"></a>
 
@@ -126,11 +127,87 @@ $$ \frac{dA}{dt} = -\sigma_a(p+d \omega, \omega) \cdot \large e^{-\int_{0}^{d} \
 
 (Note that the integral in the exponent cancels out by fundamental theorem of calculus, and variable of integration, t, gets replaced by d)
 
-There are certain points we can compare (3) with equation (1). The left hand side of (1) has $L_o(p, \omega)$ being differentiated, while the left hand side of (2) has $A$ being differentiated. Usually we would expect $A = L_o(p, \omega)$. However on the right hand side of (1) there is L_i(p, -\omega) instead of $L_o(p, \omega)$, and more importantly, the absorption cross section ($\sigma_a$) is evaluated on point $p+d \omega$ instead of point $p$.
+There are certain points we can compare (3) with equation (1). The left hand side of (1) has $L_o(p, \omega)$ being differentiated, while the left hand side of (2) has $A$ being differentiated. Usually we would expect $A = L_o(p, \omega)$. However on the right hand side of (1) there is $L_i(p, -\omega)$ instead of $L_o(p, \omega)$, and more importantly, the absorption cross section ($\sigma_a$) is evaluated on point $p+d \omega$ instead of point $p$.
 
-### Modifying the equation to make the solution fit <a name="modify_eq"></a>
+### Assumptions that can make the solution fit <a name="modify_eq"></a>
 
-Instead of applying the differential equation on 
+As we got the term $\sigma_a(p+d \omega, \omega)$ evaluated at point $p+d \omega$, we could assume two things to make the equation consistent:
+
+1) $L_o(p+d \omega, \omega) = L_i(p + d \omega, -\omega)$ (Radiance continuous on point $p+d \omega$)
+2) $A = L_o(p+d \omega, \omega) = L_i(p + d \omega, -\omega)$
+
+and try to evaluate the differential equation on point $p+d \omega$.
+
+Then the derivative (3) with the assumptions above becomes
+
+$$ \frac{d L_o(p+d \omega, \omega)}{dt} = \frac{d L_i(p + d \omega, -\omega)}{dt} = -\sigma_a(p+d \omega, \omega) \cdot \large e^{-\int_{0}^{d} \sigma_a(p+t \omega, \omega) dt} = -\sigma_a(p+d \omega, \omega) \cdot L_i(p + d \omega, -\omega)$$
+
+consistent with (1), as we needed.
+
+### Assumption - Continuity of Radiance <a name="cont_radiance"></a>
+
+The first assumption raises the question: Is radiance (L) continuous on point $p+d \omega$?
+
+I do not know if this was mentioned in PBRT, I just learned about radiance 2 days ago and haven't read most of the book. So please don't trust me on this.
+
+I was unsure of this because:
+- The section on Radiometry states that radiance is continuous if and only if the point is a free space that is not a surface boundary. Since we are in context of volume scattering, this may be the case (no boundary on point $p+d \omega$) or may not be the case (scattering counts as a probabilistic collision).
+
+I decided that it is continuous because:
+- [Wikipedia page on Absorption Cross Section](https://en.wikipedia.org/wiki/Absorption_cross_section) formulates the process as
+$$\frac{dN}{dx} = -Nn \sigma$$
+    where N: number of photons, n: absorbing molecules per volume, $\sigma$: absorption cross section. Grouping n and $sigma$ as one thing gives a similar form as equation (1) where $L_o$ and $L_i$ are not distinguished.
+- [Wikipedia page on Beer–Lambert_law](https://en.wikipedia.org/wiki/Beer%E2%80%93Lambert_law) formulates attenuation as
+$$\frac{d \Phi_e(z)}{dx} = -\mu(z)\Phi_e(z)$$
+    where \Phi_e: entering radiant flux, z: direction, and $\mu$: Napierian attenuation coefficient. Considering that radiance is the radiant flux per unit area per unit solid angle, we could see this equation as a similar format of (1), where $sigma_a$ is replaced by $\mu$, and $L_o$ and $L_i$ are not distinguished.
+
+Seeing similar formats of the given differential equation I decided I could consider the radiance to be continuous on the given point $p+d\omega$, unless it is a surface boundary (which is off the topic of volume scattering).
+
+## Re-formulating the differential equation around d <a name="reformulate"></a>
+
+While observing the differential equation, I realized that PBRT was describing the differential equation in a simplified way, omiiting the details that lead to the solution.
+
+Let's look at the situation around the radiance again.
+
+<p align="center">
+<img src="https://pbr-book.org/3ed-2018/Volume_Scattering/Volume%20absorption.svg" width="700">
+</p>
+
+*(Image: https://pbr-book.org/3ed-2018/Volume_Scattering/Volume_Scattering_Processes#Absorption)*
+
+The formulation defines the two radiance, $L_i$ and $L_o$, as both evaluated on point p. However this is not true in the image! Since we are assuming the differential cylinder to be of length d, we have to evaluated $L_o$ on point $p+d \omega$.
+
+Since the incident and exitance radiance $L_i$, $L_o$ are defined for cases where radiance is discontinuous, which is not our case, let's replace these with radiance L and make the equation simple. The incoming radiance is going into direction $\omega$ on point $p$, whereas the leaving radiance is leaving for direction $\omega$ on point $p+d\omega$. Replacing the two functions makes the difference in radiance to be
+
+$$L(p+d\omega, \omega) - L(p, \omega)$$
+
+To get the difference of radiance per unit distance, we could take the limit of $\Delta d$, which is
+
+$$\lim_{t \to 0} \frac{L(p+t\omega, \omega) - L(p, \omega)}{t} = \frac{dL(p, \omega)}{dt}$$
+
+(Note: Although d was used as a variable for distance in the description, I replaced d to t because $dL/dd$ would be a confusing notation)
+
+And estimate the difference of the radiance as a linear function of its initial radiance and $sigma_a$ evaluated at point $p+t\omega$
+
+$$L(p+t\omega, \omega) - L(p, \omega) \approx -\sigma_a(p+t\omega, \omega)L(p, \omega) \cdot t$$
+
+Taking limits on t for both sides gives
+
+$$\lim_{t \to 0} \frac{L(p+t\omega, \omega) - L(p, \omega)}{t} = \lim_{t \to 0} \frac{-\sigma_a(p+t\omega, \omega)L(p, \omega) \cdot t}{t}$$
+
+$$= \lim_{t \to 0} -\sigma_a(p+t\omega, \omega)L(p, \omega) \ \ \ \ \ \text{(t cancels out)}$$
+
+$$= -\sigma_a(p, \omega)L(p, \omega) \ \ \ \ \ \text{(t becomes zero)}$$
+
+$$= \frac{dL(p, \omega)}{dt} \ \ \ \ \ \text{(by definition of derivative)}$$
+
+Hence we obtain
+
+$$dL(p, \omega)} = -\sigma_a(p, \omega)L(p, \omega) dt$$
+
+and solution to the differential equation as
 
 todo
+
+
 
