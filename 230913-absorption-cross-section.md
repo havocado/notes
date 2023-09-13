@@ -2,11 +2,11 @@
 
 I was reading about volume scattering in Physically Based Rendering (aka [PBRT](https://pbrt.org/)) when I encountered this differential equation:
 
-$$ d L_o(p, \omega) = -\sigma_a(p, \omega) L_i(p, -\omega) dt \ \ \ \tag{1}$$
+$$d L_o(p, \omega) = -\sigma_a(p, \omega) L_i(p, -\omega) dt \ \ \ \tag{1}$$
 
 with the solution given as
 
-$$e^{-\int_{0}^{d} \omega_a(p+t \omega, \omega) dt} \ \ \ \tag{2}$$
+$$\large e^{-\int_{0}^{d} \omega_a(p+t \omega, \omega) dt} \ \ \ \tag{2}$$
 
 However it seemed unclear how (2) could work as the solution of the differential equation (1). 
 
@@ -74,9 +74,43 @@ L^-(p, \omega), \ \ \omega \cdot n_p < 0
 
 defines the two functions in (1):
 
-$$(Recall) \ \ d L_o(p, \omega) = -\sigma_a(p, \omega) L_i(p, -\omega) dt \ \ \ \tag{1}$$
+$$d L_o(p, \omega) = -\sigma_a(p, \omega) L_i(p, -\omega) dt \ \ \ \tag{1}$$
 
+#### Absorption cross section
 
-##### Absorption cross section
+Absorption cross section, $\sigma_a$, is the probability density function of light being absorbed per unit distance travelled. The general idea and formulation of Absorption is describe here ([Absorption - PBRT](https://pbr-book.org/3ed-2018/Volume_Scattering/Volume_Scattering_Processes#Absorption))
+
+<p align="center">
+<img src="https://pbr-book.org/3ed-2018/Volume_Scattering/Volume%20absorption.svg" width="700">
+</p>
+
+*(Image: https://pbr-book.org/3ed-2018/Volume_Scattering/Volume_Scattering_Processes#Absorption)*
+
+The figure describes absorption in a differential cylinder (or, a hypothetical cylinder with a very short length that is filled with particles). Radiance enters the cylinder from the left (Li works in the opposite direction of the arrow -omega) and leaves on the right.
+
+PBRT describes this process as
+
+$$L_o(p, \omega) - L_i(p, -\omega) = d L_o(p, \omega) = -\sigma_a(p, \omega) L_i(p, -\omega) dt$$
+
+which the solution is given as
+
+$$\large e^{-\int_{0}^{d} \omega_a(p+t \omega, \omega) dt} \ \ \ \tag{2}$$
+
+## Solution doesn't fit the differential equation!
+
+Recall the problem: The differential equation was given as
+
+$$d L_o(p, \omega) = -\sigma_a(p, \omega) L_i(p, -\omega) dt \ \ \ \tag{1}$$
+
+and the 'solution' provided was
+
+> If we assume that the ray travels a distance d in direction w through the medium starting at point p, the remaining portion of the original radiance is given by
+
+$$\large e^{-\int_{0}^{d} \omega_a(p+t \omega, \omega) dt} \ \ \ \tag{2}$$
+
+which, since we are assuming $L_o(p, \omega)$ != $L_i(p, -\omega)$, doesn't seem to fit in the differential equation in any way.
+
+### Modifying the equation to make the solution fit
 
 todo
+
