@@ -23,11 +23,11 @@ with the solution given as
 
 $$\large e^{-\int_{0}^{d} \sigma_a(p+t \omega, \omega) dt} \ \ \ \tag{2}$$
 
-However it seemed unclear how (2) could work as the solution of the differential equation (1). 
+However it seemed unclear how the bottom formula (2) could be a solution of the top differential equation (1). 
 
-In fact, there is no explanation on which function (1) corresponds to within the differential equation, and substituting (2) to either of $L_o(p, \omega)$ or $L_i(p, -\omega)$ doesn't fit the equation (1), which made me question what this solution was meant for.
+In fact, there is no explanation on which function the formula (1) corresponds to, or where this should be substituted into. Assuming it is either of $L_o(p, \omega)$ or $L_i(p, -\omega)$ doesn't lead to equation (1), which made me question what this formula is meant to be.
 
-After figuring out what I misunderstood from the equation the whole thing looked pretty straightforward, nevertheless I did struggle with this for a whole day so I am writing down how I understood this solution.
+After figuring out what I have misunderstood, the whole thing looked pretty straightforward. Nevertheless I struggled with this for a whole day so I am writing down how I understood this solution.
 
 Jump to the bottom for conclusion: [5. Re-formulating the differential equation](#reformulate)
 
