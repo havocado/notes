@@ -171,19 +171,27 @@ Seeing similar formats of the given differential equation I decided I could cons
 
 While observing the differential equation, I realized that PBRT was describing the differential equation in a simplified way, omiiting the details that lead to the solution. So I tried to come up with a detailed explanation of the situation and the differential equation.
 
-1. Let's define some variables.
-    1) We have 2 points of interest: $p$ and $p+d\omega$. The initial radiance starts from point $p$ with direction $\omega$, continuously decreasing through absorption. We want to figure out how much radiance is after distance $d$.
-    2) We are assuming the radiance to be continuous on all points (from above: [4.2. Assumption - Continuity of Radiance](#cont_radiance)) so we could temporarily replace the incident radiance ($L_i$) and exitance radiance ($L_o$) by radiance ($L$).
-       The radiance at point $p$, or the initial radiance, can be formulated as $L(p, \omega)$, and it is known to us.
-       The radiance at point $p+d\omega$ is what we want to figure out.
-4. We formulate the differential equation using a differential cylinder. Consider two points: $p+d\omega$ and $p+d\omega+t\omega$. We will take a limit of t to zero.
-5. We are interested in 
+#### Variable definition
 
-<br>
+Let's define some variables.
 
-While observing the differential equation, I realized that PBRT was describing the differential equation in a simplified way, omiiting the details that lead to the solution.
+##### 1) Point $p$, direction $\omega$, distance $d$
 
-Let's look at the situation around the radiance again.
+We have 2 points of interest: $p$ and $p+d\omega$. The initial radiance starts from point $p$ with direction $\omega$, continuously decreasing through absorption. We want to figure out how much radiance is after distance $d$.
+
+##### 2) Radiance
+
+Incident radiance ($L_i$) and exitance radiance ($L_o$) are as defined above.
+
+We are assuming the radiance to be continuous on all points (from above: [4.2. Assumption - Continuity of Radiance](#cont_radiance)) so we could temporarily replace both the incident radiance ($L_i$) and exitance radiance ($L_o$) by radiance ($L$), where the direction $\omega$ is negated only for incident radiances.
+
+The radiance at point $p$, or the initial radiance, can be formulated as $L(p, \omega)$, and it is known to us.
+
+The radiance at point $p+d\omega$ is what we want to figure out.
+
+#### Differential equation formulation
+
+We formulate the differential equation using a differential cylinder on point $p+dt$.
 
 <p align="center">
 <img src="https://pbr-book.org/3ed-2018/Volume_Scattering/Volume%20absorption.svg" width="700">
@@ -191,39 +199,38 @@ Let's look at the situation around the radiance again.
 
 *(Image: https://pbr-book.org/3ed-2018/Volume_Scattering/Volume_Scattering_Processes#Absorption)*
 
-The formulation defines the two radiance, $L_i$ and $L_o$, as both evaluated on point p. However this is not true in the image! Since we are assuming the differential cylinder to be of length d, we have to evaluated $L_o$ on point $p+d \omega$.
+Let's let the length of this cylinder to be $t$. We will take a limit of t to zero.
 
-Since the incident and exitance radiance $L_i$, $L_o$ are defined for cases where radiance is discontinuous, which is not our case, let's replace these with radiance L and make the equation simple. The incoming radiance is going into direction $\omega$ on point $p$, whereas the leaving radiance is leaving for direction $\omega$ on point $p+d\omega$. Replacing the two functions makes the difference in radiance to be
+Then the incoming radiance is going into direction $\omega$ on point $p+d\omega$, whereas the leaving radiance is leaving for direction $\omega$ on point $p+d\omega+t\omega$. Replacing the two functions makes the difference in radiance to be
 
-$$L(p+d\omega, \omega) - L(p, \omega)$$
+$$L(p+d\omega+t\omega, \omega) - L(p+d\omega, \omega)$$
 
-To get the difference of radiance per unit distance, we could take the limit of $\Delta d$, which is
+As provided in PBRT, we take the difference in radiance to be a linear function of its initial radiance and $\sigma_a$ evaluated at the point. We formulate this by
 
-$$\lim_{t \to 0} \frac{L(p+t\omega, \omega) - L(p, \omega)}{t} = \frac{dL(p, \omega)}{dt}$$
+$$L(p+d\omega+t\omega, \omega) - L(p+d\omega, \omega) = -\sigma_a(p+d\omega, \omega)L(p+d\omega, \omega) \cdot t$$
 
-(Note: Although d was used as a variable for distance in the description, I replaced d to t because $dL/dd$ would be a confusing notation)
+To get the difference of radiance per unit distance, we take the limit of t to zero
 
-And estimate the difference of the radiance as a linear function of its initial radiance and $sigma_a$ evaluated at point $p$
+$$\lim_{t \to 0} \frac{L(p+d\omega+t\omega, \omega) - L(p+d\omega, \omega)}{t} = \frac{dL(p+d\omega, \omega)}{dt}$$
 
-$$L(p+t\omega, \omega) - L(p, \omega) \approx -\sigma_a(p, \omega)L(p, \omega) \cdot t$$
+$$= \lim_{t \to 0} \frac{-\sigma_a(p+d\omega, \omega)L(p+d\omega, \omega) \cdot t}{t} \ \ \ \ \ \text{(Substitute the difference of radiance)}$$
 
-Taking limits on t for both sides gives
+$$= \lim_{t \to 0} -\sigma_a(p+d\omega+t\omega, \omega)L(p+d\omega, \omega) \ \ \ \ \ \text{(t cancels out)}$$
 
-$$\lim_{t \to 0} \frac{L(p+t\omega, \omega) - L(p, \omega)}{t} = \lim_{t \to 0} \frac{-\sigma_a(p+t\omega, \omega)L(p, \omega) \cdot t}{t}$$
+$$= -\sigma_a(p+d\omega, \omega)L(p+d\omega, \omega) \ \ \ \ \ \text{(t becomes zero)}$$
 
-$$= \lim_{t \to 0} -\sigma_a(p+t\omega, \omega)L(p, \omega) \ \ \ \ \ \text{(t cancels out)}$$
-
-$$= -\sigma_a(p, \omega)L(p, \omega) \ \ \ \ \ \text{(t becomes zero)}$$
-
-$$= \frac{dL(p, \omega)}{dt} \ \ \ \ \ \text{(by definition of derivative)}$$
+$$= \frac{dL(p+d\omega, \omega)}{dt} \ \ \ \ \ \text{(by definition of derivative)}$$
 
 Hence we obtain
 
-$$dL(p, \omega) = -\sigma_a(p, \omega)L(p, \omega) dt$$
+$$dL(p+d\omega, \omega) = -\sigma_a(p+d\omega, \omega)L(p+d\omega, \omega) dt$$
 
-and solution to the differential equation as
+On the initial point, distance $d$ is zero, and the result matches the provided equation (1).
 
-todo
+And we're done! The provided solution
 
+$$\large e^{-\int_{0}^{d} \sigma_a(p+t \omega, \omega) dt}$$
+
+works nicely with this result, as shown in [4.1. Assumptions that can make the solution fit](#modify_eq).
 
 
