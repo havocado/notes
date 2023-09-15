@@ -13,6 +13,8 @@
     2. [Differential equation formulation](#diff_eq_form)
     3. [The solution](#final_sol)
 
+### 1. There is something confusing in this equation <a name="intro"></a>
+
 I was reading about volume scattering in Physically Based Rendering (aka [PBRT](https://pbrt.org/)) when I encountered this differential equation:
 
 $$d L_o(p, \omega) = -\sigma_a(p, \omega) L_i(p, -\omega) dt \ \ \ \tag{1}$$
@@ -29,7 +31,7 @@ After figuring out what I misunderstood from the equation the whole thing looked
 
 Jump to the bottom for conclusion: [5. Re-formulating the differential equation](#reformulate)
 
-### (Background) First order linear differential equation and solution <a name="diffeq"></a>
+### 2. (Background) First order linear differential equation and solution <a name="diffeq"></a>
 
 The solution to first-order linear differential equation is well-known. Given an equation of the form
 
@@ -41,7 +43,7 @@ $$ y = e^{\ \int f(x) dx}$$
 
 easily verified using substitution.
 
-### (Background) Summary of relavant variables in Volume Scattering <a name="volume_scattering"></a>
+### 3. (Background) Summary of relavant variables in Volume Scattering <a name="volume_scattering"></a>
 
 The differential equation (1) explains the absorption of radiance crossing a mass of particles in a probabilistic way. 
 
@@ -113,7 +115,7 @@ which the solution is given as
 
 $$\large e^{-\int_{0}^{d} \sigma_a(p+t \omega, \omega) dt} \ \ \ \tag{2}$$
 
-## Solution doesn't fit the differential equation! <a name="doesnt_fit"></a>
+## 4. Solution doesn't fit the differential equation! <a name="doesnt_fit"></a>
 
 Recall the problem: The differential equation was given as
 
@@ -135,7 +137,7 @@ $$ \frac{dA}{dt} = -\sigma_a(p+d \omega, \omega) \cdot \large e^{-\int_{0}^{d} \
 
 There are certain points we can compare (3) with equation (1). The left hand side of (1) has $L_o(p, \omega)$ being differentiated, while the left hand side of (2) has $A$ being differentiated. Usually we would expect $A = L_o(p, \omega)$. However on the right hand side of (1) there is $L_i(p, -\omega)$ instead of $L_o(p, \omega)$, and more importantly, the absorption cross section ($\sigma_a$) is evaluated on point $p+d \omega$ instead of point $p$.
 
-### Assumptions that can make the solution fit <a name="modify_eq"></a>
+### 4.1. Assumptions that can make the solution fit <a name="modify_eq"></a>
 
 As we got the term $\sigma_a(p+d \omega, \omega)$ evaluated at point $p+d \omega$, we could assume two things to make the equation consistent:
 
@@ -150,7 +152,7 @@ $$ \frac{d L_o(p+d \omega, \omega)}{dt} = \frac{d L_i(p + d \omega, -\omega)}{dt
 
 consistent with (1), as we needed.
 
-### Assumption - Continuity of Radiance <a name="cont_radiance"></a>
+### 4.2. Assumption - Continuity of Radiance <a name="cont_radiance"></a>
 
 The first assumption raises the question: Is radiance (L) continuous on point $p+d \omega$?
 
@@ -169,11 +171,11 @@ $$\frac{d \Phi_e(z)}{dx} = -\mu(z)\Phi_e(z)$$
 
 Seeing similar formats of the given differential equation I decided I could consider the radiance to be continuous on the given point $p+d\omega$, unless it is a surface boundary (which is off the topic of volume scattering).
 
-## Re-formulating the differential equation <a name="reformulate"></a>
+## 5. Re-formulating the differential equation <a name="reformulate"></a>
 
 While observing the differential equation, I realized that PBRT was describing the differential equation in a simplified way, omiiting the details that lead to the solution. So I tried to come up with a detailed explanation of the situation and the differential equation.
 
-### Variable definition <a name="var_def"></a>
+### 5.1. Variable definition <a name="var_def"></a>
 
 Let's define some variables.
 
@@ -191,7 +193,7 @@ The radiance at point $p$, or the initial radiance, can be formulated as $L(p, \
 
 The radiance at point $p+d\omega$ is what we want to figure out.
 
-### Differential equation formulation <a name="diff_eq_form"></a>
+### 5.2. Differential equation formulation <a name="diff_eq_form"></a>
 
 We formulate the differential equation using a differential cylinder on point $p+dt$.
 
@@ -229,7 +231,7 @@ $$dL(p+d\omega, \omega) = -\sigma_a(p+d\omega, \omega)L(p+d\omega, \omega) dt$$
 
 On the initial point, distance $d$ is zero, and the result matches the provided equation (1).
 
-### The solution <a name="final_sol"></a>
+### 5.3. The solution <a name="final_sol"></a>
 
 And we're done! The provided solution
 
