@@ -173,15 +173,15 @@ Seeing similar formats of the given differential equation I decided I could cons
 
 While observing the differential equation, I realized that PBRT was describing the differential equation in a simplified way, omiiting the details that lead to the solution. So I tried to come up with a detailed explanation of the situation and the differential equation.
 
-#### Variable definition <a name="var_def"></a>
+### Variable definition <a name="var_def"></a>
 
 Let's define some variables.
 
-##### 1) Point $p$, direction $\omega$, distance $d$
+#### 1) Point $p$, direction $\omega$, distance $d$
 
 We have 2 points of interest: $p$ and $p+d\omega$. The initial radiance starts from point $p$ with direction $\omega$, continuously decreasing through absorption. We want to figure out how much radiance is after distance $d$.
 
-##### 2) Radiance
+#### 2) Radiance
 
 Incident radiance ($L_i$) and exitance radiance ($L_o$) are as defined above.
 
@@ -191,7 +191,7 @@ The radiance at point $p$, or the initial radiance, can be formulated as $L(p, \
 
 The radiance at point $p+d\omega$ is what we want to figure out.
 
-#### Differential equation formulation <a name="diff_eq_form"></a>
+### Differential equation formulation <a name="diff_eq_form"></a>
 
 We formulate the differential equation using a differential cylinder on point $p+dt$.
 
@@ -229,7 +229,7 @@ $$dL(p+d\omega, \omega) = -\sigma_a(p+d\omega, \omega)L(p+d\omega, \omega) dt$$
 
 On the initial point, distance $d$ is zero, and the result matches the provided equation (1).
 
-#### The solution <a name="final_sol"></a>
+### The solution <a name="final_sol"></a>
 
 And we're done! The provided solution
 
