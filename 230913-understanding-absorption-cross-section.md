@@ -27,7 +27,7 @@ In fact, there is no explanation on which function (1) corresponds to within the
 
 After figuring out what I misunderstood from the equation the whole thing looked pretty straightforward, nevertheless I did struggle with this for a whole day so I am writing down how I understood this solution.
 
-Jump to the bottom for conclusion: [Re-formulating the differential equation](#reformulate)
+Jump to the bottom for conclusion: [5. Re-formulating the differential equation](#reformulate)
 
 ### (Background) First order linear differential equation and solution <a name="diffeq"></a>
 
