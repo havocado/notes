@@ -1,3 +1,4 @@
+# [PBRT] Understanding the Differential Equation for Absorption Cross Section in Volume Scattering
 
 1. [There is something confusing in this equation](#intro)
 2. [(Background) First order linear differential equation and solution](#diffeq)
@@ -7,9 +8,10 @@
 4. [Solution doesn't fit the differential equation!](#doesnt_fit)
     1. [Assumptions that can make the solution fit](#modify_eq)
     2. [Assumption - Continuity of Radiance](#cont_radiance)
-5. [Re-formulating the differential equation around d](#reformulate)
-
-## There is something confusing in this equation <a name="intro"></a>
+5. [Re-formulating the differential equation](#reformulate)
+    1. [Variable definition](#var_def)
+    2. [Differential equation formulation](#diff_eq_form)
+    3. [The solution](#final_sol)
 
 I was reading about volume scattering in Physically Based Rendering (aka [PBRT](https://pbrt.org/)) when I encountered this differential equation:
 
@@ -25,7 +27,7 @@ In fact, there is no explanation on which function (1) corresponds to within the
 
 After figuring out what I misunderstood from the equation the whole thing looked pretty straightforward, nevertheless I did struggle with this for a whole day so I am writing down how I understood this solution.
 
-Jump to the bottom for conclusion: [5. Re-formulating the differential equation around d](#reformulate)
+Jump to the bottom for conclusion: [Re-formulating the differential equation](#reformulate)
 
 ### (Background) First order linear differential equation and solution <a name="diffeq"></a>
 
@@ -160,10 +162,10 @@ I was unsure of this because:
 I decided that it is continuous because:
 - [Wikipedia page on Absorption Cross Section](https://en.wikipedia.org/wiki/Absorption_cross_section) formulates the process as
 $$\frac{dN}{dx} = -Nn \sigma$$
-    where N: number of photons, n: absorbing molecules per volume, $\sigma$: absorption cross section. Grouping n and $sigma$ as one thing gives a similar form as equation (1) where $L_o$ and $L_i$ are not distinguished.
+    where N: number of photons, n: absorbing molecules per volume, $\sigma$: absorption cross section. Grouping n and $\sigma$ as one thing gives a similar form as equation (1) where $L_o$ and $L_i$ are not distinguished.
 - [Wikipedia page on Beer–Lambert_law](https://en.wikipedia.org/wiki/Beer%E2%80%93Lambert_law) formulates attenuation as
 $$\frac{d \Phi_e(z)}{dx} = -\mu(z)\Phi_e(z)$$
-    where \Phi_e: entering radiant flux, z: direction, and $\mu$: Napierian attenuation coefficient. Considering that radiance is the radiant flux per unit area per unit solid angle, we could see this equation as a similar format of (1), where $sigma_a$ is replaced by $\mu$, and $L_o$ and $L_i$ are not distinguished.
+    where \Phi_e: entering radiant flux, z: direction, and $\mu$: Napierian attenuation coefficient. Considering that radiance is the radiant flux per unit area per unit solid angle, we could see this equation as a similar format of (1), where $\sigma_a$ is replaced by $\mu$, and $L_o$ and $L_i$ are not distinguished.
 
 Seeing similar formats of the given differential equation I decided I could consider the radiance to be continuous on the given point $p+d\omega$, unless it is a surface boundary (which is off the topic of volume scattering).
 
@@ -171,7 +173,7 @@ Seeing similar formats of the given differential equation I decided I could cons
 
 While observing the differential equation, I realized that PBRT was describing the differential equation in a simplified way, omiiting the details that lead to the solution. So I tried to come up with a detailed explanation of the situation and the differential equation.
 
-#### Variable definition
+#### Variable definition <a name="var_def"></a>
 
 Let's define some variables.
 
@@ -189,7 +191,7 @@ The radiance at point $p$, or the initial radiance, can be formulated as $L(p, \
 
 The radiance at point $p+d\omega$ is what we want to figure out.
 
-#### Differential equation formulation
+#### Differential equation formulation <a name="diff_eq_form"></a>
 
 We formulate the differential equation using a differential cylinder on point $p+dt$.
 
@@ -226,6 +228,8 @@ Hence we obtain
 $$dL(p+d\omega, \omega) = -\sigma_a(p+d\omega, \omega)L(p+d\omega, \omega) dt$$
 
 On the initial point, distance $d$ is zero, and the result matches the provided equation (1).
+
+#### The solution <a name="final_sol"></a>
 
 And we're done! The provided solution
 
