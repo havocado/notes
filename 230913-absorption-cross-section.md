@@ -23,6 +23,10 @@ However it seemed unclear how (2) could work as the solution of the differential
 
 In fact, there is no explanation on which function (1) corresponds to within the differential equation, and substituting (2) to either of $L_o(p, \omega)$ or $L_i(p, -\omega)$ doesn't fit the equation (1), which made me question what this solution was meant for.
 
+After figuring out what I misunderstood from the equation the whole thing looked pretty straightforward, nevertheless I did struggle with this for a whole day so I am writing down how I understood this solution.
+
+Jump to the bottom for conclusion: [5. Re-formulating the differential equation around d](#reformulate)
+
 ### (Background) First order linear differential equation and solution <a name="diffeq"></a>
 
 The solution to first-order linear differential equation is well-known. Given an equation of the form
@@ -163,7 +167,19 @@ $$\frac{d \Phi_e(z)}{dx} = -\mu(z)\Phi_e(z)$$
 
 Seeing similar formats of the given differential equation I decided I could consider the radiance to be continuous on the given point $p+d\omega$, unless it is a surface boundary (which is off the topic of volume scattering).
 
-## Re-formulating the differential equation around d <a name="reformulate"></a>
+## Re-formulating the differential equation <a name="reformulate"></a>
+
+While observing the differential equation, I realized that PBRT was describing the differential equation in a simplified way, omiiting the details that lead to the solution. So I tried to come up with a detailed explanation of the situation and the differential equation.
+
+1. Let's define some variables.
+    1) We have 2 points of interest: $p$ and $p+d\omega$. The initial radiance starts from point $p$ with direction $\omega$, continuously decreasing through absorption. We want to figure out how much radiance is after distance $d$.
+    2) We are assuming the radiance to be continuous on all points (from above: [4.2. Assumption - Continuity of Radiance](#cont_radiance)) so we could temporarily replace the incident radiance ($L_i$) and exitance radiance ($L_o$) by radiance ($L$).
+       The radiance at point $p$, or the initial radiance, can be formulated as $L(p, \omega)$, and it is known to us.
+       The radiance at point $p+d\omega$ is what we want to figure out.
+4. We formulate the differential equation using a differential cylinder. Consider two points: $p+d\omega$ and $p+d\omega+t\omega$. We will take a limit of t to zero.
+5. We are interested in 
+
+<br>
 
 While observing the differential equation, I realized that PBRT was describing the differential equation in a simplified way, omiiting the details that lead to the solution.
 
@@ -187,9 +203,9 @@ $$\lim_{t \to 0} \frac{L(p+t\omega, \omega) - L(p, \omega)}{t} = \frac{dL(p, \om
 
 (Note: Although d was used as a variable for distance in the description, I replaced d to t because $dL/dd$ would be a confusing notation)
 
-And estimate the difference of the radiance as a linear function of its initial radiance and $sigma_a$ evaluated at point $p+t\omega$
+And estimate the difference of the radiance as a linear function of its initial radiance and $sigma_a$ evaluated at point $p$
 
-$$L(p+t\omega, \omega) - L(p, \omega) \approx -\sigma_a(p+t\omega, \omega)L(p, \omega) \cdot t$$
+$$L(p+t\omega, \omega) - L(p, \omega) \approx -\sigma_a(p, \omega)L(p, \omega) \cdot t$$
 
 Taking limits on t for both sides gives
 
