@@ -162,5 +162,47 @@ Storing local coordinates only gives a big advantage when transforming the objec
 
 The largest variable here is numRays, which is the number of pixels > 240000 in my case. So I chose to precompute the world coordinates and normals.
 
+The Mesh class would then look like this:
+```cpp
+// Mesh contains a list of vertex coordinates and faces
+class Mesh: public HittableObject {
+public:
+    std::vector<Point3> verticesLocalCoord;
+    std::vector<Point3> verticesWorldCoord; // Precomputed world coord
+    std::vector<Face> faces;
+
+    void addVertex(/*params*/);
+    void addFace(/*params*/);
+
+    CollisionData rayCollisionPoint(const Ray& r);
+
+    // Precompute all Vertex World Coord
+    void precomputeWorldProperties();
+}
+```
+
+And the Face class would look like this:
+```cpp
+class Face {
+public:
+    Mesh* mesh;
+    std::vector<int> vertexIndices; // size: 3
+
+    Vec3 localNormal;
+    Vec3 worldNormal;
+
+    float worldCoeff;
+
+    CollisionData rayCollisionPoint(const Ray& r)
+
+    // Precompute local normal
+    void precomputeLocalProperties();
+    // Precompute world normal and coeff
+    void precomputeWorldProperties();
+}
+```
+
+
 ### 4. Triangle inside-outside test
 
+Triangle inside-outside test is done on 2D plane, 
