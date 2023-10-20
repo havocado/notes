@@ -4,7 +4,7 @@
 
 Ray-Triangle intersection is a problem deciding whether a given ray of form $r(t) = o + dt$ intersects a given triangle. 
 
-Although the math involved is relatively simple, it is a function that is called very frequently within raytracing and ends up taking a huge amount of time. I tried to implement this part in reasonable efficiency, while also retrieving information such as the angle between the ray and the triangle, or the barycentric location within the triangle.
+Although the math involved is relatively simple, the intersection test is called very frequently and takes up a huge amount of time in total, especially in large meshes, so it has to be computed efficiently.
 
 ### 2. Data structure: Triangle strip
 
@@ -12,7 +12,7 @@ Although the math involved is relatively simple, it is a function that is called
 
 *(Image: https://en.wikipedia.org/wiki/Triangle_mesh)*
 
-**Triangle mesh** - It is common to allow only triangles in a mesh representation, as (1) triangle guarantees that all vertices are on a plane, whereas 4 or more vertices may not be on the same plane and (2) any polygon meshes can be represented as triangle meshes.
+**Triangle mesh** - It is common to allow only triangles in mesh representation, as (1) triangle guarantees that all vertices are on a plane, whereas 4 or more vertices may not be on the same plane and (2) any polygon meshes can be represented as triangle meshes.
 
 **Indexed vertices** - Assuming single-precision floating points, a vertex coordinate takes 12 bytes, while an unsigned integer usually takes 4 or 8 bytes only. Since a vertex may be included in multiple faces, it is memory-efficient to keep an indexed list of vertex coordinates and assign the indices to the corresponding faces.
 
@@ -54,7 +54,7 @@ public:
 }
 ```
 
-### 2-1. Other sources
+#### 2-1. Other sources
 
 - PBRT defines a separate class for normals ([here](https://pbr-book.org/3ed-2018/Geometry_and_Transformations/Normals)), so it is not mixed up with other 3D vectors. However it brings in a lot of rewriting operators and conversion functions, so I let my normals as 3D vectors to keep things simple.
 
@@ -108,7 +108,7 @@ Solves the Ray-plane intersection problem.
 
 Note that positive t implies the plane is in front of the ray origin (valid intersection), where negative t implies the plane is behind the ray origin (invalid intersection). The intersection test returns false if t < 0, and proceeds to triangle inside-outside test otherwise.
 
-#### 3-3. Implementation of ray-plane intersection
+#### 3-3. Implementation of ray-plane intersection (without transformation)
 
 It is a common practice to save the normal within the face object. I also decided to precompute $\text{coeff}$ and save it as a member of the same object. This uses an extra floating point variable per face and saves a dot product operation on each collision testing.
 
@@ -139,4 +139,28 @@ if (t < 0.f) {
 // Do triangle inside-outside test
 ```
 
+Completes the ray-trainge intersection.
+
+#### 3-4. Precomputing world coordinates
+
+The above implementation works given that the vertex coordinates are all given in world coordinates.
+
+![image](https://github.com/havocado/notes/assets/47484587/01c96640-3091-455d-a1cd-4166c106f194)
+
+*(Image: https://www.scratchapixel.com/lessons/3d-basic-rendering/computing-pixel-coordinates-of-3d-point/mathematics-computing-2d-coordinates-of-3d-points.html)*
+
+World coordinates are coordinates with respect to the scene. Local coordinates, on the other hand, are coordinates with respect to the object itself.
+
+The relationship between the two coordinates are usually represented by rotation, translation, and scale. The conversion between the coordinates is done as matrix multiplication and/or vector addition (depending on whether translation is implemented as affine or as addition). 
+
+Storing local coordinates only gives a big advantage when transforming the object frequently, as on each transformation only the 3x3 (or 4x4) matrices has to be modified instead of performing matrix-vector multiplication for all vertices in the mesh. However in raytracing, world coordinates has to be computed for each face on each collision, resulting in 3*(number of faces)*(number of rays) coordinate conversions. This is very expensive, so it is better to precompute all world coordinates before starting on raytracing.
+
+| Method                        | Time for coordinate conversion         | Memory for normals/coords         |
+|-------------------------------|----------------------------------------|-----------------------------------|
+| Precompute World Coord/Normal | (numVertices) matrix operations        | 6(numVertices)+6(numFaces) floats |
+| Precompute Local Normal only  | 3(numFaces)(numRays) matrix operations | 3(numVertices)+3(numFaces) floats |
+
+The largest variable here is numRays, which is the number of pixels > 240000 in my case. So I chose to precompute the world coordinates and normals.
+
+### 4. Triangle inside-outside test
 
