@@ -127,7 +127,7 @@ Vec3 e2 = v2 - v1;
 this->normal = unit_vector(cross(e1, e2));
 
 // Computing coeff
-this->coeff = dot(this->normal, v0);
+this->coeff = (-1.f) * dot(this->normal, v0);
 ```
 
 And on each collision testing, I would use the precomputed variables to compute t:
@@ -177,7 +177,7 @@ public:
     CollisionData rayCollisionPoint(const Ray& r);
 
     // Precompute all Vertex World Coord
-    void precomputeWorldProperties();
+    void precomputeWorldCoords();
 }
 ```
 
@@ -193,7 +193,7 @@ public:
 
     float worldCoeff;
 
-    CollisionData rayCollisionPoint(const Ray& r)
+    CollisionData rayCollisionPoint(const Ray& r);
 
     // Precompute local normal
     void precomputeLocalProperties();
