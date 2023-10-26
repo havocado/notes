@@ -206,3 +206,5 @@ public:
 ### 4. Triangle inside-outside test
 
 Triangle inside-outside test is done on 2D plane, 
+
+<Writing in progress>
